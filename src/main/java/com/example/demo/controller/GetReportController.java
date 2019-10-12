@@ -60,13 +60,10 @@ public class GetReportController {
         long currentTime = System.currentTimeMillis();
         if (appId == null) {
             code = "ERROR_APPID"; //	AppId错误
-//            return new ResultModel(code, result);
         } else if (requestTime + timePeriod < currentTime) {
             code = "ERROR_REQUEST_NO_VALID";//请求超时【安全接口专用】
-//            return new ResultModel(code, result);
         } else if (param.getNumber() > 500) {
-            code = "ERROR_MOBILE_NUMBER";//号码数量过多
-//            return new ResultModel(code, result);
+            code = "ERROR_MOBILE_NUMBER";//号码数量不能超过500
         }
         // 指定全局配置文件
         String resource = "mybatis-config.xml";
