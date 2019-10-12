@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.ResponseMapper" >
+  <resultMap id="ResponseMapper" type="com.example.demo.util.response.ReportResponse">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="sms_id" property="smsId" jdbcType="VARCHAR"/>
+    <result column="custom_sms_id" property="customSmsId" jdbcType="VARCHAR"/>
+    <result column="state" property="state" jdbcType="VARCHAR"/>
+    <result column="description" property="desc" jdbcType="VARCHAR"/>
+    <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+    <result column="receive_time" property="receiveTime" jdbcType="VARCHAR"/>
+    <result column="submit_time" property="submitTime" jdbcType="VARCHAR"/>
+    <result column="extended_code" property="extendedCode" jdbcType="VARCHAR"/>
+    <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <resultMap id="ResponseMapperReturn" type="com.example.demo.util.response.ReportResponseReturn">
+    <result column="sms_id" property="smsId" jdbcType="VARCHAR"/>
+    <result column="custom_sms_id" property="customSmsId" jdbcType="VARCHAR"/>
+    <result column="state" property="state" jdbcType="VARCHAR"/>
+    <result column="description" property="desc" jdbcType="VARCHAR"/>
+    <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+    <result column="receive_time" property="receiveTime" jdbcType="VARCHAR"/>
+    <result column="submit_time" property="submitTime" jdbcType="VARCHAR"/>
+    <result column="extended_code" property="extendedCode" jdbcType="VARCHAR"/>
+  </resultMap>
+
+
+  <insert id="insertByBatch" parameterType="java.util.List">
+    insert into m_report_response
+    (sms_id,custom_sms_id,state,description,mobile,receive_time,submit_time,extended_code,app_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.smsId,jdbcType=VARCHAR},
+      #{item.customSmsId,jdbcType=INTEGER},
+      #{item.state,jdbcType=VARCHAR},
+      #{item.desc,jdbcType=VARCHAR},
+      #{item.mobile,jdbcType=VARCHAR},
+      #{item.receiveTime,jdbcType=VARCHAR},
+      #{item.submitTime,jdbcType=VARCHAR},
+      #{item.extendedCode,jdbcType=VARCHAR},
+      #{item.appId,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <select id="findByAppIdAndOffset" resultMap="ResponseMapperReturn">
+    SELECT sms_id,custom_sms_id,state,description,mobile,receive_time,submit_time,extended_code
+    from m_report_response where app_id = #{appId,jdbcType=VARCHAR}
+    limit #{offset,jdbcType=BIGINT},#{number,jdbcType=INTEGER}
+  </select>
+
+  <select id="findAll" resultMap="ResponseMapper">
+    select * from m_report_response
+  </select>
+
+
+</mapper>
