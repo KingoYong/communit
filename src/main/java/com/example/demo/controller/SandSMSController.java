@@ -3,20 +3,15 @@ package com.example.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.example.demo.mapper.ResponseAppIdMapper;
 import com.example.demo.mapper.ResponseMapper;
-import com.example.demo.util.AES;
-import com.example.demo.util.GZIPUtils;
 import com.example.demo.util.JsonHelper;
 import com.example.demo.util.dto.CustomSmsIdAndMobileAndContent;
 import com.example.demo.util.dto.PersonalityParamsDTO;
 import com.example.demo.util.dto.ReportOffset;
+import com.example.demo.util.getsqlsession.SqlSessionUtil;
 import com.example.demo.util.open.OpenAndPut;
 import com.example.demo.util.response.ReportResponse;
 import com.example.demo.util.response.SmsResponse;
-import okhttp3.Response;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,7 +89,7 @@ public class SandSMSController {
         String encode = "UTF-8";
         String gzip = "on";
         System.out.println("-----------------------");*/
-        // 指定全局配置文件
+        /*// 指定全局配置文件
         String resource = "mybatis-config.xml";
         // 读取配置文件
         InputStream inputStream = null;
@@ -110,7 +101,9 @@ public class SandSMSController {
         // 构建sqlSessionFactory
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         // 获取sqlSession
-        SqlSession sqlSession = sqlSessionFactory.openSession();
+        SqlSession sqlSession = sqlSessionFactory.openSession();*/
+        SqlSessionUtil sessionUtil = new SqlSessionUtil();
+        SqlSession sqlSession = sessionUtil.getSqlSession();
         ResponseMapper responseMapper = sqlSession.getMapper(ResponseMapper.class);
         ResponseAppIdMapper responseAppIdMapper = sqlSession.getMapper(ResponseAppIdMapper.class);
 
@@ -153,7 +146,7 @@ public class SandSMSController {
             reportResponseList.add(reportResponse);
         }
         responseMapper.insertByBatch(reportResponseList);
-        synchronized (this){
+        synchronized (this) {
             ReportOffset reportOffset = responseAppIdMapper.findAppId(appId);
             if (reportOffset == null) {
                 ReportOffset reportOffset1 = new ReportOffset();
