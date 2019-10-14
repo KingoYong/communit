@@ -6,6 +6,7 @@ import com.example.demo.mapper.ResponseMapper;
 import com.example.demo.util.AES;
 import com.example.demo.util.GZIPUtils;
 import com.example.demo.util.JsonHelper;
+import com.example.demo.util.open.OpenAndPut;
 import com.example.demo.util.request.ReportRequest;
 import com.example.demo.util.response.ReportResponse;
 import com.example.demo.util.response.ReportResponseReturn;
@@ -36,7 +37,9 @@ public class GetReportController {
         String gzip = request.getHeader("gzip");
         String encode = request.getHeader("encode");
         String appId = request.getHeader("appId");
-        try {//解密
+        OpenAndPut openAndPut = new OpenAndPut();
+        result = openAndPut.open(data, code, gzip, encode);
+        /*try {//解密
             data = AES.decrypt(data, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +56,7 @@ public class GetReportController {
             result = new String(data, encode);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
         ReportRequest param = JSON.parseObject(result, ReportRequest.class);
         long requestTime = param.getRequestTime();
         long timePeriod = Long.parseLong(param.getRequestValidPeriod() + "000");
@@ -87,15 +90,20 @@ public class GetReportController {
         String encode = "UTF-8";
         String gzip = "on";
         System.out.println("------------------");*/
-        long offset = responseAppIdMapper.findOffset(appId);
         int number = param.getNumber();
-        List<ReportResponseReturn> reportResponseList = responseMapper.findByAppIdAndOffset(appId, offset, number);
-        offset = offset + reportResponseList.size();
-        responseAppIdMapper.updateOffset(appId, offset);
+        //todo
+        List<ReportResponseReturn> reportResponseList;
+        synchronized (this) {
+            long offset = responseAppIdMapper.findOffset(appId);
+            reportResponseList = responseMapper.findByAppIdAndOffset(appId, offset, number);
+            offset = offset + reportResponseList.size();
+            responseAppIdMapper.updateOffset(appId, offset);
+        }
         sqlSession.commit();
         sqlSession.close();
         String reportResponse = JsonHelper.toJsonString(reportResponseList) + "#" + code;
-        byte[] bytes = null;
+        return openAndPut.put(reportResponse, encode, gzip);
+        /*byte[] bytes = null;
         try {//转换为字节数组
             bytes = reportResponse.getBytes(encode);
         } catch (UnsupportedEncodingException e) {
@@ -108,6 +116,6 @@ public class GetReportController {
                 e.printStackTrace();
             }
         }
-        return AES.encrypt(bytes, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");
+        return AES.encrypt(bytes, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");*/
     }
 }

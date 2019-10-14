@@ -9,6 +9,7 @@ import com.example.demo.util.JsonHelper;
 import com.example.demo.util.dto.CustomSmsIdAndMobileAndContent;
 import com.example.demo.util.dto.PersonalityParamsDTO;
 import com.example.demo.util.dto.ReportOffset;
+import com.example.demo.util.open.OpenAndPut;
 import com.example.demo.util.response.ReportResponse;
 import com.example.demo.util.response.SmsResponse;
 import okhttp3.Response;
@@ -49,7 +50,9 @@ public class SandSMSController {
         String gzip = request.getHeader("gzip");
         String encode = request.getHeader("encode");
         String appId = request.getHeader("appId");
-        try {//解密
+        OpenAndPut openAndPut = new OpenAndPut();
+        result = openAndPut.open(data, code, gzip, encode);
+        /*try {//解密
             data = AES.decrypt(data, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,8 +69,7 @@ public class SandSMSController {
             result = new String(data, encode);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
-        System.out.println(result);
+        }*/
         PersonalityParamsDTO param = JSON.parseObject(result, PersonalityParamsDTO.class);
         long requestTime = Long.parseLong(param.getRequestTime());
         long timePeriod = Long.parseLong(param.getRequestValidPeriod() + "000");
@@ -151,17 +153,20 @@ public class SandSMSController {
             reportResponseList.add(reportResponse);
         }
         responseMapper.insertByBatch(reportResponseList);
-        ReportOffset reportOffset = responseAppIdMapper.findAppId(appId);
-        if (reportOffset == null) {
-            ReportOffset reportOffset1 = new ReportOffset();
-            reportOffset1.setAppId(appId);
-            reportOffset1.setOffset(0L);
-            responseAppIdMapper.insert(reportOffset1);
+        synchronized (this){
+            ReportOffset reportOffset = responseAppIdMapper.findAppId(appId);
+            if (reportOffset == null) {
+                ReportOffset reportOffset1 = new ReportOffset();
+                reportOffset1.setAppId(appId);
+                reportOffset1.setOffset(0L);
+                responseAppIdMapper.insert(reportOffset1);
+            }
         }
         sqlSession.commit();
         sqlSession.close();
         String smsResponse = JsonHelper.toJsonString(smsResponseList) + "#" + code;
-        byte[] bytes = null;
+        return openAndPut.put(smsResponse, encode, gzip);
+        /*byte[] bytes = null;
         try {//转换为字节数组
             bytes = smsResponse.getBytes(encode);
         } catch (UnsupportedEncodingException e) {
@@ -174,6 +179,6 @@ public class SandSMSController {
                 e.printStackTrace();
             }
         }
-        return AES.encrypt(bytes, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");
+        return AES.encrypt(bytes, "1111111111111111".getBytes(), "AES/ECB/PKCS5Padding");*/
     }
 }
