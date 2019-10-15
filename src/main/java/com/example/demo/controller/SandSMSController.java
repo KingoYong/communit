@@ -54,10 +54,16 @@ public class SandSMSController {
         ReportOffset reportOffset = responseAppIdMapper.findAppId(appId);
         if (reportOffset == null) {
             code = "ERROR_APPID"; //	AppId错误
+            response.setHeader("result", code);
+            return null;
         } else if (requestTime + timePeriod < currentTime) {
             code = "ERROR_REQUEST_NO_VALID";//请求超时【安全接口专用】
+            response.setHeader("result", code);
+            return null;
         } else if (param.getSmses().length > 500) {
             code = "ERROR_MOBILE_NUMBER";//号码数量过多
+            response.setHeader("result", code);
+            return null;
         }
         List<SmsResponse> smsResponseList = new LinkedList<>();
         List<ReportResponse> reportResponseList = new LinkedList<>();

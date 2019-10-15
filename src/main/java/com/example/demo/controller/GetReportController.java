@@ -49,12 +49,17 @@ public class GetReportController {
         ReportOffset reportOffset = responseAppIdMapper.findAppId(appId);
         if (reportOffset == null) {
             code = "ERROR_APPID";//AppId错误
+            response.setHeader("result", code);
+            return null;
         } else if (requestTime + timePeriod < currentTime) {
             code = "ERROR_REQUEST_NO_VALID";//请求超时
+            response.setHeader("result", code);
+            return null;
         } else if (param.getNumber() > 500) {
             code = "ERROR_MOBILE_NUMBER";//号码数量过多
+            response.setHeader("result", code);
+            return null;
         }
-
         int number = param.getNumber();
         List<ReportResponseReturn> reportResponseList;
         long offset = responseAppIdMapper.findOffset(appId);
