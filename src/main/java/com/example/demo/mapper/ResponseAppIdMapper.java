@@ -1,12 +1,9 @@
 package com.example.demo.mapper;
 
 import com.example.demo.util.dto.ReportOffset;
-import com.example.demo.util.response.SmsResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Mapper
 @Component
