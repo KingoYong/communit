@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.AppMapper">
+
+    <insert id="insert" parameterType="com.example.demo.util.dto.AppParamDto">
+    insert into m_app_report (alert,ids,title,timestamp,md5,reason,code,state)
+    values (#{alert,jdbcType=VARCHAR},#{ids,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},#{timestamp,jdbcType=VARCHAR},
+    #{md5,jdbcType=VARCHAR},#{reason,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR})
+  </insert>
+</mapper>

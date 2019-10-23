@@ -44,6 +44,7 @@
 		<!--直接映射到相应的mapper文件 -->
 		<mapper resource="mappers/ResponseAppIdMapper.xml" />
 		<mapper resource="mappers/ResponseMapper.xml"/>
+		<mapper resource="mappers/AppMapper.xml"/>
 	</mappers>
 
 </configuration>
