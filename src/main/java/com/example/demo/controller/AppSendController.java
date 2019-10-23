@@ -38,7 +38,7 @@ public class AppSendController {
             if ("alert".equals(split[0])) {
                 appParamDto.setAlert(split[1]);
             } else if ("userIds".equals(split[0])) {
-                appParamDto.setIds(split[1]);
+                appParamDto.setIds(split[1].replaceAll("%2C",","));
             }else if ("title".equals(split[0])) {
                 appParamDto.setTitle(split[1]);
             }else if ("timestamp".equals(split[0])) {
