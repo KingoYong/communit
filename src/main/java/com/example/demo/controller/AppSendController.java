@@ -18,7 +18,7 @@ public class AppSendController {
     @PostMapping("/third/push/v1/batch")
     @ResponseBody
     public Map<String, Object> getApp(@RequestBody String str) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         String alert = str.split("&")[0].split("=")[1];
         if (StringUtils.isBlank(alert)) {
             map.put("code", 400);
